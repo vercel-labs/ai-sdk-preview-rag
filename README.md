@@ -1,3 +1,7 @@
+# AI SDK RAG Template
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnicoalbanese%2Fai-sdk-rag-template&env=OPENAI_API_KEY,DATABASE_URL&envDescription=You%20will%20need%20an%20OPENAI%20API%20Key%20and%20a%20Postgres%20connection%20string.&project-name=ai-sdk-rag&repository-name=ai-sdk-rag)
+
 ## Getting Started
 
 To get the project up and running, follow these steps:
