@@ -22,9 +22,9 @@ To get the project up and running, follow these steps:
    DATABASE_URL=your_postgres_connection_string_here
    ```
 
-4. Push the database schema:
+4. Migrate the database schema:
    ```bash
-   npm run db:push
+   npm run db:migrate
    ```
 
 5. Start the development server:
