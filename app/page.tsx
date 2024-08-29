@@ -59,6 +59,9 @@ export default function Chat() {
     <div className="flex justify-center items-start sm:items-center min-h-screen w-full bg-neutral-100 px-4 md:px-0 py-4">
       <div className="flex flex-col items-center w-full max-w-[500px]">
         <motion.div
+          initial={{
+            background: "transparent",
+          }}
           animate={{
             background: isExpanded ? "#262626" : "transparent",
             minHeight: isExpanded ? 200 : 0,
