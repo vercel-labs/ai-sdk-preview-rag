@@ -18,21 +18,26 @@ const ProjectOverview = () => {
           <InformationIcon />
         </p>
         <p>
-          This chatbot demo uses the Vercel AI SDK to implement a RAG
-          (Retrieval-Augmented Generation) system that can reason on proprietary
-          knowledge. This demo implements retrieval as a tool with the{" "}
+          The{" "}
+          <Link
+            href="https://sdk.vercel.ai/docs/reference/ai-sdk-ui/use-chat"
+            className="text-blue-500"
+          >
+            useChat
+          </Link>{" "}
+          hook along with the{" "}
           <Link
             href="https://sdk.vercel.ai/docs/reference/ai-sdk-core/stream-text"
-            className="font-mono text-blue-500 bg-neutral-100 px-[2px] mx-[2px]"
+            className="text-blue-500"
           >
             streamText
           </Link>{" "}
-          function.
+          function allows you build applications with retrieval augmentated
+          generation (RAG) capabilities. Data is stored as vector embeddings
+          using DrizzleORM and PostgreSQL.
         </p>
-        <p>The demo uses DrizzleORM with PostgreSQL to store embeddings.</p>
         <p>
-          {" "}
-          Learn how to build this project with this{" "}
+          Learn how to build this project by following this{" "}
           <Link
             className="text-blue-500 dark:text-blue-400"
             href="https://sdk.vercel.ai/docs/guides/rag-chatbot"
