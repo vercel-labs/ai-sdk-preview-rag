@@ -6,8 +6,8 @@ A [Next.js](https://nextjs.org/) application, powered by the Vercel AI SDK, that
 
 ## Features
 
-- Information retrieval and addition through tool calls using the [ `streamText` ](https://sdk.vercel.ai/reference/ai-sdk-core/stream-text) function
-- Real-time streaming of model responses to the frontend using the [`useChat`](https://sdk.vercel.ai/reference/ai-sdk-ui/use-chat) hook
+- Information retrieval and addition through tool calls using the [ `streamText` ](https://sdk.vercel.ai/docs/reference/ai-sdk-core/stream-text) function
+- Real-time streaming of model responses to the frontend using the [`useChat`](https://sdk.vercel.ai/docs/reference/ai-sdk-ui/use-chat) hook
 - Vector embedding storage with [DrizzleORM](https://orm.drizzle.team/) and [PostgreSQL](https://www.postgresql.org/)
 - Animated UI with [Framer Motion](https://www.framer.com/motion/)
 
