@@ -12,12 +12,14 @@ export default function Chat() {
   const [toolCall, setToolCall] = useState<string>();
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
-      maxToolRoundtrips: 2,
+      maxToolRoundtrips: 4,
       onToolCall({ toolCall }) {
         setToolCall(toolCall.toolName);
       },
     });
+
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
   useEffect(() => {
     if (messages.length > 0) setIsExpanded(true);
   }, [messages]);
@@ -147,7 +149,9 @@ const Loading = ({ tool }: { tool?: string }) => {
       >
         <div className="flex space-x-4 items-center">
           <div className="animate-spin rounded-full h-6 w-6 border-4 border-neutral-400 border-t-transparent dark:border-neutral-50 dark:border-t-transparent" />
-          <div className="text-neutral-500 dark:text-neutral-400">{toolName}...</div>
+          <div className="text-neutral-500 dark:text-neutral-400">
+            {toolName}...
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>
