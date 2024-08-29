@@ -42,12 +42,20 @@ export async function POST(req: Request) {
         description: `get information from your knowledge base to answer questions.`,
         parameters: z.object({
           question: z.string().describe("the users question"),
-          keywords: z.array(z.string()).describe("keywords to search"),
+          similarQuestions: z.array(z.string()).describe("keywords to search"),
         }),
-        execute: async ({ keywords }) =>
-          Promise.all(
-            keywords.map(async (keyword) => await findRelevantContent(keyword)),
-          ),
+        execute: async ({ similarQuestions }) => {
+          const results = await Promise.all(
+            similarQuestions.map(
+              async (question) => await findRelevantContent(question),
+            ),
+          );
+          // Flatten the array of arrays and remove duplicates based on 'name'
+          const uniqueResults = Array.from(
+            new Map(results.flat().map((item) => [item?.name, item])).values(),
+          );
+          return uniqueResults;
+        },
       }),
       understandQuery: tool({
         description: `understand the users query. use this tool on every prompt.`,
@@ -63,19 +71,17 @@ export async function POST(req: Request) {
           const { object } = await generateObject({
             model: openai("gpt-4o"),
             system:
-              "You are a query understanding assistant. Analyze the user query and provide key information.",
+              "You are a query understanding assistant. Analyze the user query and generate similar questions.",
             schema: z.object({
-              keywords: z
+              questions: z
                 .array(z.string())
                 .max(3)
-                .describe(
-                  "suggested search keywords (comma-separated), be concise",
-                ),
+                .describe("similar questions to the user's query. be concise."),
             }),
             prompt: `Analyze this query: "${query}". Provide the following:
-                    5. Suggested search keywords (comma-separated)`,
+                    3 similar questions that could help answer the user's query`,
           });
-          return object.keywords;
+          return object.questions;
         },
       }),
     },
