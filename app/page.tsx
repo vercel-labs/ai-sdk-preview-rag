@@ -57,7 +57,7 @@ export default function Chat() {
     .slice(-1)[0];
 
   return (
-    <div className="flex justify-center items-start sm:items-center min-h-screen w-full bg-neutral-100 px-4 md:px-0 py-4">
+    <div className="flex justify-center items-start sm:items-center min-h-screen w-full dark:bg-zinc-900 px-4 md:px-0 py-4">
       <div className="flex flex-col items-center w-full max-w-[500px]">
         <motion.div
           animate={{
@@ -68,7 +68,10 @@ export default function Chat() {
             type: "spring",
             bounce: 0.5,
           }}
-          className={ cn( "bg-neutral-50 rounded-lg w-full", isExpanded ? "bg-neutral-800" : "bg-transparent"  )}
+          className={cn(
+            "bg-neutral-50 rounded-lg w-full",
+            isExpanded ? "bg-neutral-800" : "bg-transparent",
+          )}
         >
           <div className="flex flex-col w-full justify-between gap-2">
             <motion.div
@@ -94,7 +97,7 @@ export default function Chat() {
             </motion.div>
             <form onSubmit={handleSubmit} className="flex space-x-2">
               <Input
-                className={`w-full border ${isExpanded ? "border-neutral-700" : ""}`}
+                className={`w-full border dark:bg-zinc-700 dark:border-zinc-700 dark:placeholder:text-zinc-400 dark:text-zinc-300 ${isExpanded ? "border-neutral-700" : ""}`}
                 minLength={3}
                 required
                 value={input}
