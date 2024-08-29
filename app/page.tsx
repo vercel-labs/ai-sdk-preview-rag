@@ -57,7 +57,7 @@ export default function Chat() {
     .slice(-1)[0];
 
   return (
-    <div className="flex justify-center items-start sm:items-center min-h-screen w-full dark:bg-zinc-900 px-4 md:px-0 py-4">
+    <div className="flex justify-center items-start sm:items-center min-h-screen w-full dark:bg-neutral-900 px-4 md:px-0 py-4">
       <div className="flex flex-col items-center w-full max-w-[500px]">
         <motion.div
           animate={{
@@ -97,7 +97,7 @@ export default function Chat() {
             </motion.div>
             <form onSubmit={handleSubmit} className="flex space-x-2">
               <Input
-                className={`w-full border dark:bg-zinc-700 dark:border-zinc-700 dark:placeholder:text-zinc-400 dark:text-zinc-300 ${isExpanded ? "border-neutral-700" : ""}`}
+                className={`bg-neutral-50 w-full border text-neutral-400 dark:bg-neutral-700 dark:border-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300 ${isExpanded ? "border-neutral-700 bg-black" : ""}`}
                 minLength={3}
                 required
                 value={input}
