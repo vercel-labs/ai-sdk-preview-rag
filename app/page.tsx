@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown, { Options } from "react-markdown";
 import React from "react";
 import ProjectOverview from "@/components/project-overview";
+import { LoadingIcon } from "@/components/icons";
 
 export default function Chat() {
   const [toolCall, setToolCall] = useState<string>();
@@ -55,48 +56,45 @@ export default function Chat() {
     .slice(-1)[0];
 
   return (
-    <div className="flex justify-center items-start sm:items-center min-h-screen w-full bg-neutral-100 px-4 md:px-0">
-      <div className="flex flex-col items-center w-full max-w-[600px]">
-        <ProjectOverview />
+    <div className="flex justify-center items-start sm:items-center min-h-screen w-full bg-neutral-100 px-4 md:px-0 py-4">
+      <div className="flex flex-col items-center w-full max-w-[500px]">
         <motion.div
           animate={{
+            background: isExpanded ? "#262626" : "transparent",
             minHeight: isExpanded ? 200 : 0,
-            padding: isExpanded ? 30 : 0,
+            padding: isExpanded ? 12 : 0,
           }}
           transition={{
             type: "spring",
-            stiffness: 260,
-            damping: 40,
+            bounce: 0.3,
           }}
-          className="bg-neutral-50 rounded-md border border-border w-full"
+          className="bg-neutral-50 rounded-lg w-full"
         >
-          <div className="flex flex-col w-full justify-between">
+          <div className="flex flex-col w-full justify-between gap-2">
             <motion.div
-              layout
               transition={{
-                duration: 0.2,
-                ease: "easeInOut",
+                type: "spring",
               }}
-              className="space-y-4 min-h-fit"
+              className="min-h-fit flex flex-col gap-2"
             >
               <AnimatePresence>
                 {awaitingResponse || currentToolCall ? (
-                  <div className="pb-8">
+                  <div className="">
                     <Loading tool={currentToolCall} />
                   </div>
                 ) : lastAssistantMessage ? (
-                  <div className="pb-8">
+                  <div className="">
                     <div className="text-neutral-400 text-sm w-fit">
                       {userQuery.content}
                     </div>
-                    <AssistantMessage m={lastAssistantMessage} />
+                    <AssistantMessage message={lastAssistantMessage} />
                   </div>
                 ) : null}
               </AnimatePresence>
             </motion.div>
             <form onSubmit={handleSubmit} className="flex space-x-2">
               <Input
-                className="w-full"
+                className={`w-full border ${isExpanded ? "border-neutral-700" : ""}`}
                 minLength={3}
                 required
                 value={input}
@@ -106,27 +104,28 @@ export default function Chat() {
             </form>
           </div>
         </motion.div>
+        <ProjectOverview />
       </div>
     </div>
   );
 }
 
-const AssistantMessage = ({ m }: { m: Message | undefined }) => {
-  if (m === undefined) return "HELLO";
+const AssistantMessage = ({ message }: { message: Message | undefined }) => {
+  if (message === undefined) return "HELLO";
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={m.id}
+        key={message.id}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.1, ease: "easeInOut" }}
-        className="whitespace-pre-wrap font-mono min-h-6  text-sm pt-2 text-neutral-700 overflow-hidden"
+        className="whitespace-pre-wrap font-mono text-sm text-neutral-200 overflow-hidden"
       >
         <MemoizedReactMarkdown
           className={"max-h-72 overflow-y-scroll no-scrollbar-gutter"}
         >
-          {m.content}
+          {message.content}
         </MemoizedReactMarkdown>
       </motion.div>
     </AnimatePresence>
@@ -136,10 +135,10 @@ const AssistantMessage = ({ m }: { m: Message | undefined }) => {
 const Loading = ({ tool }: { tool?: string }) => {
   const toolName =
     tool === "getInformation"
-      ? "getting information"
+      ? "Getting information"
       : tool === "addResource"
-      ? "adding information"
-      : "thinking";
+        ? "Adding information"
+        : "Thinking";
 
   return (
     <AnimatePresence mode="wait">
@@ -147,12 +146,14 @@ const Loading = ({ tool }: { tool?: string }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.1, ease: "easeInOut" }}
-        className="overflow-hidden h-12 flex justify-start items-center"
+        transition={{ type: "spring" }}
+        className="overflow-hidden flex justify-start items-center"
       >
-        <div className="flex space-x-4 items-center">
-          <div className="animate-spin rounded-full h-6 w-6 border-4 border-neutral-400 border-t-transparent dark:border-neutral-50 dark:border-t-transparent" />
-          <div className="text-neutral-500 dark:text-neutral-400">
+        <div className="flex flex-row gap-2 items-center">
+          <div className="animate-spin text-neutral-300">
+            <LoadingIcon />
+          </div>
+          <div className="text-neutral-400 dark:text-neutral-400 text-sm">
             {toolName}...
           </div>
         </div>
@@ -165,5 +166,5 @@ const MemoizedReactMarkdown: React.FC<Options> = React.memo(
   ReactMarkdown,
   (prevProps, nextProps) =>
     prevProps.children === nextProps.children &&
-    prevProps.className === nextProps.className
+    prevProps.className === nextProps.className,
 );
