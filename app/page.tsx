@@ -66,7 +66,7 @@ export default function Chat() {
           }}
           transition={{
             type: "spring",
-            bounce: 0.3,
+            bounce: 0.5,
           }}
           className="bg-neutral-50 rounded-lg w-full"
         >
