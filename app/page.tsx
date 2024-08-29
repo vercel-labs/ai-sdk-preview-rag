@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown, { Options } from "react-markdown";
 import React from "react";
+import ProjectOverview from "@/components/project-overview";
 
 export default function Chat() {
   const [toolCall, setToolCall] = useState<string>();
@@ -54,56 +55,58 @@ export default function Chat() {
     .slice(-1)[0];
 
   return (
-    <div className="flex justify-center items-center h-screen w-full bg-neutral-100">
-      <motion.div
-        animate={{
-          width: isExpanded ? 500 : 256,
-          minHeight: isExpanded ? 200 : 0,
-          padding: isExpanded ? 50 : 0,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 260,
-          damping: 40,
-        }}
-        className="bg-neutral-50 rounded-md shadow-md w-64"
-      >
-        <div className="flex flex-col w-full justify-between">
-          <motion.div
-            layout
-            transition={{
-              duration: 0.2,
-              ease: "easeInOut",
-            }}
-            className="space-y-4 min-h-fit"
-          >
-            <AnimatePresence>
-              {awaitingResponse || currentToolCall ? (
-                <div className="pb-8">
-                  <Loading tool={currentToolCall} />
-                </div>
-              ) : lastAssistantMessage ? (
-                <div className="pb-8">
-                  <div className="text-neutral-400 text-sm w-fit">
-                    {userQuery.content}
+    <div className="flex justify-center items-start sm:items-center min-h-screen w-full bg-neutral-100 px-4 md:px-0">
+      <div className="flex flex-col items-center w-full max-w-[600px]">
+        <ProjectOverview />
+        <motion.div
+          animate={{
+            minHeight: isExpanded ? 200 : 0,
+            padding: isExpanded ? 30 : 0,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 260,
+            damping: 40,
+          }}
+          className="bg-neutral-50 rounded-md border border-border w-full"
+        >
+          <div className="flex flex-col w-full justify-between">
+            <motion.div
+              layout
+              transition={{
+                duration: 0.2,
+                ease: "easeInOut",
+              }}
+              className="space-y-4 min-h-fit"
+            >
+              <AnimatePresence>
+                {awaitingResponse || currentToolCall ? (
+                  <div className="pb-8">
+                    <Loading tool={currentToolCall} />
                   </div>
-                  <AssistantMessage m={lastAssistantMessage} />
-                </div>
-              ) : null}
-            </AnimatePresence>
-          </motion.div>
-          <form onSubmit={handleSubmit} className="flex space-x-2">
-            <Input
-              className=""
-              minLength={3}
-              required
-              value={input}
-              placeholder={"Ask me anything..."}
-              onChange={handleInputChange}
-            />
-          </form>
-        </div>
-      </motion.div>
+                ) : lastAssistantMessage ? (
+                  <div className="pb-8">
+                    <div className="text-neutral-400 text-sm w-fit">
+                      {userQuery.content}
+                    </div>
+                    <AssistantMessage m={lastAssistantMessage} />
+                  </div>
+                ) : null}
+              </AnimatePresence>
+            </motion.div>
+            <form onSubmit={handleSubmit} className="flex space-x-2">
+              <Input
+                className="w-full"
+                minLength={3}
+                required
+                value={input}
+                placeholder={"Ask me anything..."}
+                onChange={handleInputChange}
+              />
+            </form>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
@@ -135,8 +138,8 @@ const Loading = ({ tool }: { tool?: string }) => {
     tool === "getInformation"
       ? "getting information"
       : tool === "addResource"
-        ? "adding information"
-        : "thinking";
+      ? "adding information"
+      : "thinking";
 
   return (
     <AnimatePresence mode="wait">
@@ -162,5 +165,5 @@ const MemoizedReactMarkdown: React.FC<Options> = React.memo(
   ReactMarkdown,
   (prevProps, nextProps) =>
     prevProps.children === nextProps.children &&
-    prevProps.className === nextProps.className,
+    prevProps.className === nextProps.className
 );
