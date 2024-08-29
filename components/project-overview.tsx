@@ -32,7 +32,7 @@ const ProjectOverview = () => {
           >
             streamText
           </Link>{" "}
-          function allows you build applications with retrieval augmentated
+          function allows you to build applications with retrieval augmented
           generation (RAG) capabilities. Data is stored as vector embeddings
           using DrizzleORM and PostgreSQL.
         </p>

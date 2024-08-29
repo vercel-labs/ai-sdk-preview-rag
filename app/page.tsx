@@ -69,8 +69,8 @@ export default function Chat() {
             bounce: 0.5,
           }}
           className={cn(
-            "bg-neutral-50 rounded-lg w-full",
-            isExpanded ? "bg-neutral-800" : "bg-transparent",
+            "rounded-lg w-full ",
+            isExpanded ? "bg-neutral-200 dark:bg-neutral-800" : "bg-transparent",
           )}
         >
           <div className="flex flex-col w-full justify-between gap-2">
@@ -87,7 +87,7 @@ export default function Chat() {
                   </div>
                 ) : lastAssistantMessage ? (
                   <div className="">
-                    <div className="text-neutral-400 text-sm w-fit">
+                    <div className="dark:text-neutral-400 text-neutral-500 text-sm w-fit">
                       {userQuery.content}
                     </div>
                     <AssistantMessage message={lastAssistantMessage} />
@@ -97,7 +97,7 @@ export default function Chat() {
             </motion.div>
             <form onSubmit={handleSubmit} className="flex space-x-2">
               <Input
-                className={`bg-neutral-50 w-full border text-neutral-400 dark:bg-neutral-700 dark:border-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300 ${isExpanded ? "border-neutral-700 bg-black" : ""}`}
+                className={`bg-neutral-50 w-full text-neutral-700 dark:bg-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300`}
                 minLength={3}
                 required
                 value={input}
@@ -123,7 +123,7 @@ const AssistantMessage = ({ message }: { message: Message | undefined }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="whitespace-pre-wrap font-mono text-sm text-neutral-200 overflow-hidden"
+        className="whitespace-pre-wrap font-mono anti text-sm text-neutral-800 dark:text-neutral-200 overflow-hidden"
       >
         <MemoizedReactMarkdown
           className={"max-h-72 overflow-y-scroll no-scrollbar-gutter"}
@@ -153,10 +153,10 @@ const Loading = ({ tool }: { tool?: string }) => {
         className="overflow-hidden flex justify-start items-center"
       >
         <div className="flex flex-row gap-2 items-center">
-          <div className="animate-spin text-neutral-300">
+          <div className="animate-spin dark:text-neutral-400 text-neutral-500">
             <LoadingIcon />
           </div>
-          <div className="text-neutral-400 dark:text-neutral-400 text-sm">
+          <div className="text-neutral-500 dark:text-neutral-400 text-sm">
             {toolName}...
           </div>
         </div>
