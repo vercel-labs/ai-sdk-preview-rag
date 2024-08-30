@@ -62,9 +62,10 @@ export default function Chat() {
     .slice(-1)[0];
 
   return (
-    <div className="flex justify-center items-start sm:items-center min-h-screen w-full dark:bg-neutral-900 px-4 md:px-0 py-4">
+    <div className="flex justify-center items-start sm:pt-16 min-h-screen w-full dark:bg-neutral-900 px-4 md:px-0 py-4">
       <div className="flex flex-col items-center w-full max-w-[500px]">
-        <motion.div
+      <ProjectOverview />
+      <motion.div
           animate={{
             minHeight: isExpanded ? 200 : 0,
             padding: isExpanded ? 12 : 0,
@@ -81,6 +82,16 @@ export default function Chat() {
           )}
         >
           <div className="flex flex-col w-full justify-between gap-2">
+            <form onSubmit={handleSubmit} className="flex space-x-2">
+              <Input
+                className={`bg-neutral-100 text-base w-full text-neutral-700 dark:bg-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300`}
+                minLength={3}
+                required
+                value={input}
+                placeholder={"Ask me anything..."}
+                onChange={handleInputChange}
+              />
+            </form>
             <motion.div
               transition={{
                 type: "spring",
@@ -89,12 +100,15 @@ export default function Chat() {
             >
               <AnimatePresence>
                 {awaitingResponse || currentToolCall ? (
-                  <div className="">
+                  <div className="px-2 min-h-12">
+                    <div className="dark:text-neutral-400 text-neutral-500 text-sm w-fit mb-1">
+                      {userQuery.content}
+                    </div>
                     <Loading tool={currentToolCall} />
                   </div>
                 ) : lastAssistantMessage ? (
-                  <div className="">
-                    <div className="dark:text-neutral-400 text-neutral-500 text-sm w-fit">
+                  <div className="px-2 min-h-12">
+                    <div className="dark:text-neutral-400 text-neutral-500 text-sm w-fit mb-1">
                       {userQuery.content}
                     </div>
                     <AssistantMessage message={lastAssistantMessage} />
@@ -102,19 +116,8 @@ export default function Chat() {
                 ) : null}
               </AnimatePresence>
             </motion.div>
-            <form onSubmit={handleSubmit} className="flex space-x-2">
-              <Input
-                className={`bg-neutral-50 text-base w-full text-neutral-700 dark:bg-neutral-700 dark:placeholder:text-neutral-400 dark:text-neutral-300`}
-                minLength={3}
-                required
-                value={input}
-                placeholder={"Ask me anything..."}
-                onChange={handleInputChange}
-              />
-            </form>
           </div>
         </motion.div>
-        <ProjectOverview />
         <motion.div
           className="flex flex-row gap-4 items-center justify-between fixed bottom-6 text-xs "
           initial={{ y: 20, opacity: 0 }}
