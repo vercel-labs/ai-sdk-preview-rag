@@ -100,3 +100,7 @@
 * {
     font-family: "uncut sans", sans-serif;
 }
+
+#markdown a {
+    @apply text-blue-500;
+}
