@@ -39,7 +39,7 @@ const ProjectOverview = () => {
         <p>
           Learn how to build this project by following this{" "}
           <Link
-            className="text-blue-500 dark:text-blue-400"
+            className="text-blue-500"
             href="https://sdk.vercel.ai/docs/guides/rag-chatbot"
             target="_blank"
           >
