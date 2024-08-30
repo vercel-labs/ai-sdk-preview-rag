@@ -8,9 +8,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import ReactMarkdown, { Options } from "react-markdown";
 import React from "react";
 import ProjectOverview from "@/components/project-overview";
-import { LoadingIcon } from "@/components/icons";
+import { GitIcon, LoadingIcon, VercelIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function Chat() {
   const [toolCall, setToolCall] = useState<string>();
@@ -114,6 +115,30 @@ export default function Chat() {
           </div>
         </motion.div>
         <ProjectOverview />
+        <motion.div
+          className="flex flex-row gap-4 items-center justify-between fixed bottom-6 text-xs "
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          <Link
+            target="_blank"
+            href="https://github.com/vercel-labs/ai-sdk-preview-rag"
+            className="flex flex-row gap-2 items-center border px-2 py-1.5 rounded-md hover:bg-neutral-100 dark:bg-black dark:text-white dark:border-neutral-800 dark:hover:bg-neutral-900"
+          >
+            <GitIcon />
+            View Source Code
+          </Link>
+
+          <Link
+            target="_blank"
+            href="https://vercel.com/templates/next.js/ai-sdk-rag"
+            className="flex flex-row gap-2 items-center bg-neutral-900 px-2 py-1.5 rounded-md text-neutral-50 hover:bg-neutral-950 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-50"
+          >
+            <VercelIcon size={14} />
+            Deploy with Vercel
+          </Link>
+        </motion.div>
       </div>
     </div>
   );

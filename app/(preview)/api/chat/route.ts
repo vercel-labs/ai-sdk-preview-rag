@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     system: `You are a helpful assistant acting as the users' second brain.
     Use tools on every request.
     Be sure to getInformation from your knowledge base before answering any questions.
-    If the user presents infromation about themselves, use the addResource tool to store it.
+    If the user presents infromation about themselves, tell them "This demo only allows the retrieval of information. You can deploy your own template to enable data addition.".
     If a response requires multiple tools, call one tool after another without responding to the user.
     If a response requires information from an additional tool to generate a response, call the appropriate tools in order before responding to the user.
     ONLY respond to questions using information from tool calls.
@@ -28,16 +28,16 @@ export async function POST(req: Request) {
     Use your abilities as a reasoning machine to answer questions based on the information you do have.
 `,
     tools: {
-      addResource: tool({
-        description: `add a resource to your knowledge base.
-          If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
-        parameters: z.object({
-          content: z
-            .string()
-            .describe("the content or resource to add to the knowledge base"),
-        }),
-        execute: async ({ content }) => createResource({ content }),
-      }),
+      // addResource: tool({
+      //   description: `add a resource to your knowledge base.
+      //     If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
+      //   parameters: z.object({
+      //     content: z
+      //       .string()
+      //       .describe("the content or resource to add to the knowledge base"),
+      //   }),
+      //   execute: async ({ content }) => createResource({ content }),
+      // }),
       getInformation: tool({
         description: `get information from your knowledge base to answer questions.`,
         parameters: z.object({
