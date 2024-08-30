@@ -10,6 +10,7 @@ import React from "react";
 import ProjectOverview from "@/components/project-overview";
 import { GitIcon, LoadingIcon, VercelIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import Link from "next/link";
 
 export default function Chat() {
@@ -19,6 +20,9 @@ export default function Chat() {
       maxToolRoundtrips: 4,
       onToolCall({ toolCall }) {
         setToolCall(toolCall.toolName);
+      },
+      onError: (error) => {
+        toast.error("You've been rate limited, please try again later!");
       },
     });
 
@@ -71,7 +75,9 @@ export default function Chat() {
           }}
           className={cn(
             "rounded-lg w-full ",
-            isExpanded ? "bg-neutral-200 dark:bg-neutral-800" : "bg-transparent",
+            isExpanded
+              ? "bg-neutral-200 dark:bg-neutral-800"
+              : "bg-transparent",
           )}
         >
           <div className="flex flex-col w-full justify-between gap-2">
