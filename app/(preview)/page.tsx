@@ -155,6 +155,7 @@ const AssistantMessage = ({ message }: { message: Message | undefined }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="whitespace-pre-wrap font-mono anti text-sm text-neutral-800 dark:text-neutral-200 overflow-hidden"
+        id="markdown"
       >
         <MemoizedReactMarkdown
           className={"max-h-72 overflow-y-scroll no-scrollbar-gutter"}
