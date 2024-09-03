@@ -27,10 +27,6 @@ export const understandQueryParams = z.object({
     ),
 });
 
-export type AddResourceParams = z.infer<typeof addResourceParams>;
-export type GetInformationParams = z.infer<typeof getInformationParams>;
-export type UnderstandQueryParams = z.infer<typeof understandQueryParams>;
-
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
