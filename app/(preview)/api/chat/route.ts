@@ -1,5 +1,5 @@
 import { createResource } from "@/lib/actions/resources";
-import { findRelevantContent, Guide } from "@/lib/ai/embedding";
+import { findRelevantContent } from "@/lib/ai/embedding";
 import { openai } from "@ai-sdk/openai";
 import { convertToCoreMessages, generateObject, streamText, tool } from "ai";
 import { z } from "zod";
