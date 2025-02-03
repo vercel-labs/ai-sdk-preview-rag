@@ -5,13 +5,13 @@ import { generateObject, streamText, tool } from "ai";
 import { z } from "zod";
 
 // Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+export const maxDuration = 100;
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai("gpt-4o"),
+    model: openai("deepseek/deepseek-r1-distill-llama-70b:free"),
     messages,
     system: `You are a helpful assistant acting as the users' second brain.
     Use tools on every request.
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
         }),
         execute: async ({ query }) => {
           const { object } = await generateObject({
-            model: openai("gpt-4o"),
+            model: openai("deepseek/deepseek-r1-distill-llama-70b:free"),
             system:
               "You are a query understanding assistant. Analyze the user query and generate similar questions.",
             schema: z.object({

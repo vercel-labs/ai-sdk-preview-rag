@@ -1,0 +1,291 @@
+{
+  "digital_product_categories": {
+    "info_products": {
+      "description": "Digital products intended to bring users closer to their goals through packaged information",
+      "types": ["Courses", "Ebooks", "Guides", "Templates"],
+      "advantages": {
+        "pros": [
+          "Niche-specific high conversion rates",
+          "Unlimited scalability",
+          "Passive income potential",
+          "No physical inventory"
+        ],
+        "cons": [
+          "Competitive market",
+          "Heavy marketing requirement",
+          "Market saturation",
+          "Constant content updates needed"
+        ]
+      },
+      "best_practices": [
+        "Focus on specific pain points",
+        "Create premium quality content",
+        "Build strong marketing funnel",
+        "Provide measurable value"
+      ]
+    },
+    "digital_services": {
+      "description": "Skills-based digital solutions solving client problems",
+      "types": [
+        {
+          "category": "Creative",
+          "services": [
+            "Graphic Design",
+            "Video Editing",
+            "Content Creation"
+          ]
+        },
+        {
+          "category": "Technical",
+          "services": [
+            "Web Development",
+            "Marketing",
+            "SEO",
+            "Consulting"
+          ]
+        }
+      ],
+      "advantages": {
+        "pros": [
+          "Low entry barrier",
+          "High perceived value",
+          "Agency scaling potential",
+          "Direct problem solving"
+        ],
+        "cons": [
+          "Time intensive",
+          "Client dependency",
+          "Limited scalability",
+          "Requires constant availability"
+        ]
+      }
+    },
+    "software_products": {
+      "description": "Functional tools users pay to access",
+      "types": [
+        "SaaS Applications",
+        "Mobile Apps",
+        "Scripts/Tools",
+        "APIs",
+        "Plugins/Extensions"
+      ],
+      "advantages": {
+        "pros": [
+          "Recurring revenue model",
+          "High scalability",
+          "Multiple monetization options",
+          "Low churn when product-market fit achieved"
+        ],
+        "cons": [
+          "High development costs",
+          "Technical maintenance required",
+          "Customer support needed",
+          "Complex infrastructure"
+        ]
+      },
+      "pricing_models": [
+        "Subscription",
+        "Usage-based",
+        "Freemium",
+        "Enterprise"
+      ]
+    },
+    "membership_communities": {
+      "description": "Exclusive communities with recurring access fees",
+      "features": [
+        "Private content access",
+        "Networking opportunities",
+        "Expert interactions",
+        "Resource sharing"
+      ],
+      "advantages": {
+        "pros": [
+          "Recurring revenue",
+          "Strong user engagement",
+          "Network effect growth",
+          "High customer lifetime value"
+        ],
+        "cons": [
+          "High maintenance",
+          "Content demands",
+          "Member retention challenges",
+          "Moderation requirements"
+        ]
+      },
+      "success_factors": [
+        "Clear value proposition",
+        "Active community management",
+        "Regular engagement",
+        "Quality content delivery"
+      ]
+    }
+  },
+  "monetization_strategies": {
+    "pricing_tiers": [
+      {
+        "level": "Entry",
+        "price_range": "$27-97",
+        "target": "First-time customers",
+        "purpose": "Lead qualification"
+      },
+      {
+        "level": "Core",
+        "price_range": "$197-997",
+        "target": "Committed customers",
+        "purpose": "Main revenue driver"
+      },
+      {
+        "level": "Premium",
+        "price_range": "$1997+",
+        "target": "High-value clients",
+        "purpose": "Maximum value delivery"
+      }
+    ],
+    "recommended_approaches": [
+      "Value-based pricing",
+      "Tiered offerings",
+      "Bundle deals",
+      "Premium positioning"
+    ]
+  },
+  "top_products": {
+    "infoproducts": {
+      "type": "Course/Ebook/Guide",
+      "pros": [
+        "Niche-specific high conversion rate",
+        "Scaleable to unlimited customers",
+        "Passive income after setup"
+      ],
+      "cons": [
+        "Competitive market",
+        "Requires strong marketing"
+      ],
+      "examples": [
+        "PDF guides",
+        "Video courses",
+        "Templates",
+        "Digital downloads"
+      ]
+    },
+    "communities": {
+      "type": "Paid membership/group",
+      "pros": [
+        "Recurring revenue",
+        "Loyal customer base",
+        "Community driven growth"
+      ],
+      "cons": [
+        "High management needs",
+        "Significant churn rate",
+        "Content demands"
+      ]
+    },
+    "software": {
+      "type": "SaaS/Apps/Tools",
+      "pros": [
+        "Recurring revenue model",
+        "Multiple niche opportunities",
+        "Low churn if valuable"
+      ],
+      "cons": [
+        "High development cost",
+        "Technical maintenance",
+        "Support needed"
+      ]
+    },
+    "services": {
+      "type": "Digital expertise",
+      "pros": [
+        "Low entry barrier",
+        "Easy to sell",
+        "Agency potential"
+      ],
+      "cons": [
+        "Time intensive",
+        "Client dependent",
+        "Limited scale"
+      ]
+    }
+  },
+  "top_performing_products": {
+    "metadata": {
+      "source": "whop.com",
+      "last_updated": "2024",
+      "category": "digital_products"
+    },
+    "products": [
+      {
+        "title": "Media Labs",
+        "url": "https://whop.com/discover/media-labs-creator/",
+        "price": "$250.00 / month",
+        "affiliate_money_generated": "$2,433.75",
+        "reviews": "80",
+        "owner_name": "N/A",
+        "members": "679"
+      },
+      {
+        "title": "Social Army",
+        "url": "https://whop.com/discover/social-army/",
+        "price": "$49.00 / month",
+        "affiliate_money_generated": "$1,882.99",
+        "reviews": "259",
+        "owner_name": "N/A",
+        "members": "2,662"
+      },
+      {
+        "title": "Potion Discord Access",
+        "url": "https://whop.com/discover/potion-alpha/",
+        "price": "$60.00 / week",
+        "affiliate_money_generated": "$1,787.70",
+        "reviews": "264",
+        "owner_name": "N/A",
+        "members": "1,234"
+      },
+      {
+        "title": "Cash Cow University",
+        "details": {
+          "url": "https://whop.com/discover/CCU/",
+          "price": {
+            "amount": 997.00,
+            "interval": "one_time"
+          },
+          "metrics": {
+            "affiliate_earnings": 1450.25,
+            "reviews_count": 147,
+            "members_count": 892
+          }
+        }
+      },
+      {
+        "title": "UHQ Facility",
+        "details": {
+          "url": "https://whop.com/discover/uhq-facility/",
+          "price": {
+            "amount": 29.99,
+            "interval": "month"
+          },
+          "metrics": {
+            "affiliate_earnings": 1397.50,
+            "reviews_count": 198,
+            "members_count": 1543
+          }
+        }
+      },
+      {
+        "title": "Digital Marketing Hub",
+        "details": {
+          "url": "https://whop.com/discover/dmh-elite/",
+          "price": {
+            "amount": 149.99,
+            "interval": "month"
+          },
+          "metrics": {
+            "affiliate_earnings": 1289.80,
+            "reviews_count": 173,
+            "members_count": 945
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,219 @@
+{
+  "digital_products": {
+    "categories": [
+      {
+        "type": "Infoproducts",
+        "pros": [
+          "Niche-specific high conversion rate",
+          "Scaleable to unlimited customers",
+          "Passive income after setup"
+        ],
+        "cons": [
+          "Competitive market",
+          "Requires strong marketing"
+        ],
+        "examples": [
+          "Courses",
+          "Ebooks",
+          "Guides"
+        ]
+      }
+    ],
+    "best_performing_niches": {
+      "tier_1": [
+        {
+          "niche": "Trading/Crypto",
+          "reason": "Strong money-making desire",
+          "engagement_rate": "High"
+        },
+        {
+          "niche": "Marketing",
+          "reason": "Business growth focus",
+          "engagement_rate": "High"
+        }
+      ],
+      "tier_2": [
+        {
+          "niche": "Fitness",
+          "reason": "Common personal desire",
+          "engagement_rate": "Medium"
+        }
+      ]
+    },
+    "platform_strategies": {
+      "tiktok": {
+        "algorithm_metrics": [
+          {
+            "metric": "Watch time",
+            "importance": "Critical",
+            "target": "High retention relative to video length"
+          },
+          {
+            "metric": "Engagement rate",
+            "importance": "High",
+            "target": "Above 5% engagement"
+          }
+        ],
+        "best_performing_content": [
+          {
+            "type": "How-to tutorials",
+            "avg_engagement": "8%",
+            "conversion_rate": "2.3%"
+          }
+        ]
+      }
+    },
+    "product_types": {
+      "communities": {
+        "description": "Exclusive community for paying members with private events and networking",
+        "pros": [
+          "Recurring revenue stream",
+          "Build loyal customer base",
+          "Strong community engagement"
+        ],
+        "cons": [
+          "High management overhead",
+          "Significant churn rate",
+          "Constant content creation needed"
+        ]
+      },
+      "software": {
+        "description": "Functional tools users pay to access",
+        "types": ["SaaS", "Apps", "Web apps", "Scripts", "APIs", "Plugins"],
+        "pros": [
+          "Recurring revenue model",
+          "Multiple niche opportunities",
+          "Scalable solution",
+          "Low churn if product is valuable"
+        ],
+        "cons": [
+          "High development costs",
+          "Ongoing maintenance required",
+          "Technical support needed"
+        ]
+      },
+      "digital_services": {
+        "description": "Solving client problems through digital expertise",
+        "examples": [
+          "Graphic design",
+          "Video editing",
+          "Content creation",
+          "Web design",
+          "Marketing",
+          "Consulting"
+        ],
+        "pros": [
+          "Low entry barrier",
+          "Easy to sell",
+          "Agency model potential"
+        ],
+        "cons": [
+          "Time intensive",
+          "Client dependent",
+          "Limited scalability"
+        ]
+      }
+    },
+    "marketing_strategies": {
+      "platforms": {
+        "youtube": {
+          "longform": {
+            "algorithm_metrics": [
+              {
+                "metric": "Click-Through-Rate",
+                "importance": "Critical",
+                "description": "Viewer click frequency after feed appearance"
+              },
+              {
+                "metric": "Average View Duration",
+                "importance": "High",
+                "description": "Average watch time per viewer"
+              }
+            ],
+            "content_strategies": [
+              {
+                "type": "Product-Focused",
+                "approach": "Direct product showcase",
+                "example": "I built a real life RPG game to manage my life in Notion"
+              },
+              {
+                "type": "Lead Magnet",
+                "approach": "Value content with CTA to free resource",
+                "example": "How to Build a LEGIT Online Course (Works in 2025)"
+              }
+            ]
+          },
+          "shorts": {
+            "key_metrics": [
+              {
+                "metric": "Swipe ratio",
+                "target": "Under 20% swipe-away rate"
+              },
+              {
+                "metric": "Average viewer duration",
+                "target": "100% for <30s videos, 80% for 30-60s"
+              }
+            ]
+          }
+        },
+        "tiktok": {
+          "algorithm_preferences": [
+            {
+              "factor": "Watch time",
+              "importance": "Critical",
+              "notes": "High retention relative to video length"
+            },
+            {
+              "factor": "Engagement",
+              "importance": "High",
+              "metrics": ["Shares", "Comments", "Likes", "Saves"]
+            }
+          ],
+          "content_optimization": {
+            "initial_push": {
+              "test_audience": "200-1000 viewers",
+              "success_metrics": ["engagement", "retention", "sharing"]
+            },
+            "targeting": {
+              "geo_targeting": {
+                "preferred": "USA",
+                "method": "Use districtdroid for US phone access",
+                "reason": "Highest converting market"
+              }
+            }
+          }
+        }
+      },
+      "email_marketing": {
+        "funnel_stages": {
+          "awareness": {
+            "purpose": "Initial brand discovery",
+            "channels": ["Social media content", "Lead magnet"],
+            "goal": "Generate interest in lead magnet"
+          },
+          "interest": {
+            "purpose": "Product impact consideration",
+            "content_type": "Value-based authority content",
+            "focus": "Product benefits clarification"
+          },
+          "decision": {
+            "purpose": "Purchase consideration",
+            "content_type": "Social proof",
+            "elements": ["Testimonials", "Success stories", "Customer feedback"]
+          },
+          "action": {
+            "purpose": "Purchase conversion",
+            "elements": ["Clear CTA", "Urgency triggers", "Limited time offers"]
+          }
+        },
+        "email_rules": [
+          "Address pain points directly",
+          "Include clear CTAs",
+          "3:1 value to promotion ratio",
+          "Subtle product pitching",
+          "Build trust before selling"
+        ]
+      }
+    }
+  }
+}

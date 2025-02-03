@@ -1,0 +1,220 @@
+{
+    "all_products": {
+        "products": [
+          {
+            "title": "Media Labs",
+        "url": "https://whop.com/discover/media-labs-creator/",
+        "price": "$250.00 / month",
+        "affiliate_money_generated": "$2,433.75",
+        "reviews": "80",
+        "owner_name": "N/A",
+        "members": "679"
+      },
+      {
+        "title": "Social Army",
+        "url": "https://whop.com/discover/social-army/",
+        "price": "$49.00 / month",
+        "affiliate_money_generated": "$1,882.99",
+        "reviews": "259",
+        "owner_name": "N/A",
+        "members": "2,662"
+      },
+      {
+        "title": "Potion Discord Access",
+        "url": "https://whop.com/discover/potion-alpha/",
+        "price": "$60.00 / week",
+        "affiliate_money_generated": "$1,787.70",
+        "reviews": "264",
+        "owner_name": "N/A",
+        "members": "3,574"
+      },
+      {
+        "title": "GG33 Enlightened Academy",
+        "url": "https://whop.com/discover/gg33-academy/",
+        "price": "$98.00 / month",
+        "affiliate_money_generated": "$1,265.48",
+        "reviews": "26",
+        "owner_name": "N/A",
+        "members": "604"
+      },
+      {
+        "title": "ParlayScience Discord Access",
+        "url": "https://whop.com/discover/parlayscience/",
+        "price": "$25.00 / 2 weeks",
+        "affiliate_money_generated": "$923.53",
+        "reviews": "675",
+        "owner_name": "N/A",
+        "members": "N/A"
+      },
+      {
+        "title": "Strike Access Full Access",
+        "url": "https://whop.com/discover/strike-access-full/",
+        "price": "$50.00 / month",
+        "affiliate_money_generated": "$791.50",
+        "reviews": "441",
+        "owner_name": "N/A",
+        "members": "1,386"
+      },
+      {
+        "title": "Kaizen Platinum",
+        "url": "https://whop.com/discover/kaizen-trading/",
+        "price": "$199.00 / month",
+        "affiliate_money_generated": "$757.35",
+        "reviews": "787",
+        "owner_name": "N/A",
+        "members": "N/A"
+      },
+      {
+        "title": "Wealth Group Credit Card Pay",
+        "url": "https://whop.com/discover/wealthgroup/",
+        "price": "$225.00 / month",
+        "affiliate_money_generated": "$711.00",
+        "reviews": "1282",
+        "owner_name": "N/A",
+        "members": "N/A"
+      },
+      {
+        "title": "Josh Exclusive VIP Access",
+        "url": "https://whop.com/discover/exclusive-vip-access/",
+        "price": "$100.00 / month",
+        "affiliate_money_generated": "$682.50",
+        "reviews": "17",
+        "owner_name": "N/A",
+        "members": "2,962"
+      }
+  },
+    "top_products_1": [
+      {
+        "title": "Her Last Call Academy",
+        "title": "Her Last Call Academy",
+        "price": "$49.00 / month",
+        "revenue_generated": "$498.50",
+        "members": 475,
+        "whop_rank": 95
+      },
+      {
+        "title": "The Options Cartel Full Access",
+        "price": "$99.99 / month",
+        "revenue_generated": "$469.50",
+        "members": 1523,
+        "whop_rank": 47
+      },
+      {
+        "title": "Your First Dollar",
+        "price": "$50.00 / month",
+        "revenue_generated": "$435.75",
+        "members": 1121,
+        "whop_rank": 164
+      },
+      {
+        "title": "Deal Soldier",
+        "price": "$44.00 / month",
+        "revenue_generated": "$433.65",
+        "members": 6506,
+        "whop_rank": 23
+      },
+      {
+        "title": "CHEESELOCKS",
+        "price": "$30.00 / week",
+        "revenue_generated": "$426.00",
+        "members": 2446,
+        "whop_rank": 13
+      },
+      {
+        "title": "SwipeSignals Renewal",
+        "price": "$85.00 / month",
+        "revenue_generated": "$420.75",
+        "members": 374,
+        "whop_rank": 101
+      },
+      {
+        "title": "Hold My Hand Wholesale Pass",
+        "price": "$19.99 / month",
+        "revenue_generated": "$373.00",
+        "members": 11269,
+        "whop_rank": 21
+      },
+      {
+        "title": "Strike Access Full Access",
+        "price": "$50.00 / month",
+        "revenue_generated": "$350.25",
+        "members": 1493,
+        "whop_rank": 112
+      },
+      {
+        "title": "GOAT Sports Bets Membership",
+        "price": "$35.00 / week",
+        "revenue_generated": "$349.20",
+        "members": 1035,
+        "whop_rank": 59
+      }
+    ]
+  }
+  ,
+    "top_products_2": [
+      {
+        "title": "Lynk's Private",
+        "revenue_generated": "$345.00",
+        "members": "N/A",
+        "whop_rank": "#33"
+      },
+      {
+        "title": "Josh Chart Goat University",
+        "price": "$39.00 / month",
+        "revenue_generated": "$334.40",
+        "members": "N/A",
+        "whop_rank": "#34"
+      },
+      {
+        "title": "KingCapSports Full Access",
+        "price": "$50.00",
+        "revenue_generated": "$321.25",
+        "members": "640 joined",
+        "whop_rank": "#12"
+      },
+      {
+        "title": "BH Insights",
+        "price": "$499.99 / month",
+        "revenue_generated": "$300.00",
+        "members": "143 joined",
+        "whop_rank": "#83"
+      },
+      {
+        "title": "Thor's Hammer Solution",
+        "price": "$600.00 / month",
+        "revenue_generated": "$300.00",
+        "members": "N/A",
+        "whop_rank": "#44"
+      },
+      {
+        "title": "Ecom Degree University",
+        "price": "$99.00 / month",
+        "revenue_generated": "$297.50",
+        "members": "335 joined",
+        "whop_rank": "#213"
+      },
+      {
+        "title": "TMS+ (Heavy Hitters) 💎",
+        "price": "$9.99 / week",
+        "revenue_generated": "$295.78",
+        "members": "6153 now",
+        "whop_rank": "#52"
+      },
+      {
+        "title": "Stock Talk Insiders",
+        "price": "$59.00 / month",
+        "revenue_generated": "$287.35",
+        "members": "272",
+        "whop_rank": "#122"
+      },
+      {
+        "title": "BetRecaps VIP Discord",
+        "price": "$30.00 / month",
+        "revenue_generated": "$271.50",
+        "members": "15",
+        "whop_rank": "#229"
+      }
+    ]
+  }
+
+  

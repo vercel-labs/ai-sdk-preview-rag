@@ -11,11 +11,16 @@ import { embeddings as embeddingsTable } from "../db/schema/embeddings";
 
 export const createResource = async (input: NewResourceParams) => {
   try {
-    const { content } = insertResourceSchema.parse(input);
+    const parsedInput = insertResourceSchema.parse(input);
+    const { content } = parsedInput;
+
+    if (typeof content !== 'string') {
+      throw new Error("Content must be a string");
+    }
 
     const [resource] = await db
       .insert(resources)
-      .values({ content })
+      .values([{ content }]) // Ensure values is an array of objects
       .returning();
 
     const embeddings = await generateEmbeddings(content);
@@ -23,12 +28,12 @@ export const createResource = async (input: NewResourceParams) => {
       embeddings.map((embedding) => ({
         resourceId: resource.id,
         ...embedding,
-      })),
+      }))
     );
-    return "Resource successfully created and embedded.";
+
+    return resource;
   } catch (error) {
-    return error instanceof Error && error.message.length > 0
-      ? error.message
-      : "Error, please try again.";
+    console.error("Error creating resource:", error);
+    throw error;
   }
 };

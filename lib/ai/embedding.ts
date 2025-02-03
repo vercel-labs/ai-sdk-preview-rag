@@ -35,12 +35,22 @@ export const generateEmbedding = async (value: string): Promise<number[]> => {
 
 export const findRelevantContent = async (userQuery: string) => {
   const userQueryEmbedded = await generateEmbedding(userQuery);
-  const similarity = sql<number>`1 - (${cosineDistance(embeddings.embedding, userQueryEmbedded)})`;
+
+  // Explicitly convert the array to a Postgres array:
+  const userEmbeddingSql = sql`ARRAY[${sql.join(userQueryEmbedded)}]::float4[]`;
+
+  // Fixed syntax for cosineDistance:
+  const similarity = sql<number>`1 - (${cosineDistance(embeddings.embedding, userEmbeddingSql)})`;
+
   const similarGuides = await db
-    .select({ name: embeddings.content, similarity })
+    .select({
+      name: embeddings.content,
+      similarity,
+    })
     .from(embeddings)
     .where(gt(similarity, 0.3))
-    .orderBy((t) => desc(t.similarity))
+    .orderBy(desc(similarity))
     .limit(4);
+
   return similarGuides;
 };
