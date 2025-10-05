@@ -253,7 +253,7 @@ export function VoiceWidget({ agentUrl, videoSrc = "/loop.webm" }: VoiceWidgetPr
             <Phone className="w-4 h-4 text-[#94a3b8] group-hover:text-[#cbd5e1] transition-all" />
           )}
           <span className="text-[#94a3b8] text-sm font-medium group-hover:text-[#cbd5e1] transition-colors">
-            {isLoading ? 'Connecting to voice assistant...' : 'Talk with voice assistant'}
+            {isLoading ? 'Connecting...' : 'Talk with LiveKit'}
           </span>
         </div>
       </button>
