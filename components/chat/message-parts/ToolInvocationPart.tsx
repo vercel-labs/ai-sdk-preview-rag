@@ -183,7 +183,12 @@ export function ToolInvocationPart({ part }: PartComponentProps) {
         >
           <ChainOfThought defaultOpen={false} className="max-w-[80%]">
             <ChainOfThoughtHeader>
-              {isSearchTool && searchQuery ? `Search: «${searchQuery}»` : 'Tool execution'}
+              {isSearchTool ? 
+                `${getToolLabel(part.type)} - Found ${sources.length} results` : 
+                isDocumentTool ? 'Reading document' :
+                isChangelogTool ? 'Checking changelog' :
+                isRepoTool ? 'Searching repository' :
+                'Tool execution'}
             </ChainOfThoughtHeader>
             <ChainOfThoughtContent>
               <ChainOfThoughtStep

@@ -7,17 +7,17 @@ export async function GET() {
   try {
     const categoryCounts = await db
       .select({
-        category: resources.category,
+        rootCategory: resources.rootCategory,
         count: count(),
       })
       .from(resources)
-      .where(sql`${resources.category} IS NOT NULL`)
-      .groupBy(resources.category);
+      .where(sql`${resources.rootCategory} IS NOT NULL`)
+      .groupBy(resources.rootCategory);
 
     const categoriesWithCounts = categoryCounts
-      .filter((c) => c.category !== null)
+      .filter((c) => c.rootCategory !== null)
       .map((c) => ({
-        name: c.category as string,
+        name: c.rootCategory as string,
         count: Number(c.count),
       }))
       .sort((a, b) => b.count - a.count);

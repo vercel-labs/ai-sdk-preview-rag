@@ -10,6 +10,7 @@ export const resources = pgTable("resources", {
     .primaryKey()
     .$defaultFn(() => nanoid()),
   content: text("content").notNull(),
+  rootCategory: varchar("root_category", { length: 255 }),
   category: varchar("category", { length: 255 }),
   sourceUrl: text("source_url"),
   sourceTitle: text("source_title"),
