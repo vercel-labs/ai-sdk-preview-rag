@@ -26,6 +26,11 @@ export function parseAgentEvent(data: any): AgentEventType | null {
       return null;
     }
 
+    // Filter out events we don't handle
+    if (data.type === 'metrics_collected' || data.type === 'speech_created') {
+      return null;
+    }
+
     // Validate required fields based on event type
     switch (data.type) {
       case 'agent_state_changed':

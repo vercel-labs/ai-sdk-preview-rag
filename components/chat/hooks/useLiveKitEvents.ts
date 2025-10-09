@@ -7,7 +7,8 @@ import type {
   AgentState, 
   RestoreHistoryEvent,
   SessionConfig,
-  SessionConfigUpdateEvent
+  SessionConfigUpdateEvent,
+  ClearHistoryEvent
 } from '@/lib/livekit/types';
 import type { Message } from '@/components/chat/types';
 
@@ -21,6 +22,7 @@ interface UseLiveKitEventsReturn {
   sendChatMessage: (content: string) => Promise<void>;
   sendRestoreHistory: (messages: Message[]) => Promise<void>;
   sendSessionUpdate: (config: Partial<SessionConfig>) => Promise<void>;
+  sendClearHistory: () => Promise<void>;
 }
 
 export function useLiveKitEvents({
@@ -136,6 +138,39 @@ export function useLiveKitEvents({
         });
       } catch (error) {
         console.error('[LiveKit] Failed to send session update:', error);
+        throw error;
+      }
+    },
+    [room]
+  );
+
+  // Send clear history event to agent
+  const sendClearHistory = useCallback(
+    async () => {
+      if (!room?.localParticipant) {
+        console.error('[LiveKit] Cannot send clear history: room not connected');
+        throw new Error('Room not connected');
+      }
+
+      const event: ClearHistoryEvent = {
+        type: 'clear_history',
+        timestamp: Date.now(),
+      };
+
+      console.log('[LiveKit] Sending clear history event');
+
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(JSON.stringify(event));
+        
+        await room.localParticipant.publishData(data, {
+          reliable: true,
+          topic: 'lk.client_events',
+        });
+        
+        console.log('[LiveKit] Clear history event sent successfully');
+      } catch (error) {
+        console.error('[LiveKit] Failed to send clear history:', error);
         throw error;
       }
     },
@@ -277,9 +312,9 @@ export function useLiveKitEvents({
             if (onAgentEvent) {
               onAgentEvent(agentEvent);
             }
-          } else {
-            console.warn('[LiveKit] Failed to parse agent event:', data);
           }
+          // Note: parseAgentEvent returns null for filtered events (speech_created, metrics_collected)
+          // which is expected behavior, not an error
         }
       } catch (error) {
         console.error('[LiveKit] Failed to handle data message:', error, {
@@ -365,6 +400,7 @@ export function useLiveKitEvents({
     sendChatMessage,
     sendRestoreHistory,
     sendSessionUpdate,
+    sendClearHistory,
   };
 }
 

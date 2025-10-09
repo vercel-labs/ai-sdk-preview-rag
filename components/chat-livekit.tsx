@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, RefObject, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { nanoid } from "nanoid";
 import { ChatHeader } from "./chat/ChatHeader";
+import { VoiceControls } from "./chat/VoiceControls";
 import { CategoryFilter } from "./chat/CategoryFilter";
 import { MessageList } from "./chat/MessageList";
 import { ChatInput } from "./chat/ChatInput";
@@ -12,6 +13,9 @@ import { useLiveKitConnection } from "./chat/hooks/useLiveKitConnection";
 import { useLiveKitEvents } from "./chat/hooks/useLiveKitEvents";
 import { useLiveKitMessages } from "./chat/hooks/useLiveKitMessages";
 import { useLiveKitAgentEvents } from "./chat/hooks/useLiveKitAgentEvents";
+import { useLiveKitAudio } from "./chat/hooks/useLiveKitAudio";
+import { useLiveKitRPC } from "./chat/hooks/useLiveKitRPC";
+import { useAutoScroll } from "./chat/hooks/useAutoScroll";
 import type { Message } from "./chat/types";
 
 interface ChatLiveKitProps {
@@ -46,6 +50,13 @@ export default function ChatLiveKit({
     }
     return "low";
   });
+  const [modality, setModality] = useState<"text" | "voice">(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem("chat-modality");
+      return (saved as "text" | "voice") || "text";
+    }
+    return "text";
+  });
   const [categories, setCategories] = useState<Array<{ name: string; count: number }>>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -56,12 +67,13 @@ export default function ChatLiveKit({
     }
     return false;
   });
-  const [userHasScrolled, setUserHasScrolled] = useState<boolean>(false);
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const historyRestoredRef = useRef<boolean>(false);
+  const waitingForAgentRef = useRef<boolean>(false);
 
   // Initialize messages from localStorage
   const initialMessages = (() => {
@@ -88,6 +100,7 @@ export default function ChatLiveKit({
     setMessages,
     setIsStreaming,
     setError,
+    modality,
   });
 
   // LiveKit connection
@@ -100,15 +113,31 @@ export default function ChatLiveKit({
         effort: reasoningEffort,
         selectedCategories,
         talkWithPage,
-        modality: 'text',
+        modality,
       },
       autoConnect: false,
     });
 
   // LiveKit events  
-  const { agentState, sendChatMessage, sendRestoreHistory, sendSessionUpdate } = useLiveKitEvents({
+  const { agentState, sendChatMessage, sendRestoreHistory, sendSessionUpdate, sendClearHistory } = useLiveKitEvents({
     room,
     onAgentEvent: handleAgentEvent,
+  });
+
+  // Audio output state (for muting agent audio)
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+
+  // Audio handling for voice mode
+  const { isMicEnabled, isAudioPlaying, toggleMicrophone } = useLiveKitAudio({
+    room,
+    enabled: modality === 'voice',
+    audioEnabled: isAudioEnabled,
+  });
+
+  // RPC method registration (for agent to call browser functions)
+  useLiveKitRPC({
+    room,
+    enabled: isConnected,
   });
 
   // Load categories from API
@@ -131,19 +160,29 @@ export default function ChatLiveKit({
   // Auto-connect to LiveKit room
   useEffect(() => {
     if (!isConnected && !isConnecting && connectionState.status === 'disconnected') {
+      waitingForAgentRef.current = true;
       connect();
     }
   }, [isConnected, isConnecting, connectionState.status, connect]);
 
-  // Send message history after connection (config already in JWT token)
+  // Send message history after agent is ready (waiting for 'listening' state)
   useEffect(() => {
-    if (!isConnected) return;
+    if (!isConnected || agentState !== 'listening') return;
+    if (!waitingForAgentRef.current) return; // Wait for NEW agent after reconnect
+    if (historyRestoredRef.current) return; // Already restored
 
     const initSession = async () => {
       try {
+        console.log('[Chat] Agent ready, restoring history...', { messageCount: messages.length });
         // Send message history if exists (config is already in JWT token metadata)
         if (messages.length > 0) {
           await sendRestoreHistory(messages as Message[]);
+          historyRestoredRef.current = true;
+          waitingForAgentRef.current = false;
+          console.log('[Chat] History restored successfully');
+          
+          // Scroll to bottom after history is restored
+          scrollToBottom({ force: true, delay: 100 });
         }
       } catch (error) {
         console.error('[Chat] Failed to restore history:', error);
@@ -151,7 +190,8 @@ export default function ChatLiveKit({
     };
 
     initSession();
-  }, [isConnected]); // Only run once when connected
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, agentState]); // Wait for agent to be listening (messages intentionally not in deps to avoid re-running)
 
   // Save messages to localStorage
   useEffect(() => {
@@ -170,6 +210,11 @@ export default function ChatLiveKit({
     localStorage.setItem("chat-reasoning-effort", reasoningEffort);
   }, [reasoningEffort]);
 
+  // Save modality to localStorage
+  useEffect(() => {
+    localStorage.setItem("chat-modality", modality);
+  }, [modality]);
+
   // Save expanded state to localStorage
   useEffect(() => {
     localStorage.setItem("chat-expanded", String(isExpanded));
@@ -183,92 +228,13 @@ export default function ChatLiveKit({
     localStorage.setItem("selected-categories", JSON.stringify(selectedCategories));
   }, [selectedCategories]);
 
-  // Watch for model changes and notify agent
-  useEffect(() => {
-    if (!isConnected) return;
-    sendSessionUpdate({ model }).catch(error => {
-      console.error('[Chat] Failed to update model:', error);
-    });
-  }, [model, isConnected, sendSessionUpdate]);
-
-  // Watch for reasoning effort changes and notify agent
-  useEffect(() => {
-    if (!isConnected) return;
-    sendSessionUpdate({ effort: reasoningEffort }).catch(error => {
-      console.error('[Chat] Failed to update effort:', error);
-    });
-  }, [reasoningEffort, isConnected, sendSessionUpdate]);
-
-  // Watch for category changes and notify agent
-  useEffect(() => {
-    if (!isConnected) return;
-    sendSessionUpdate({ selectedCategories }).catch(error => {
-      console.error('[Chat] Failed to update categories:', error);
-    });
-  }, [selectedCategories, isConnected, sendSessionUpdate]);
-
-  // Watch for talkWithPage changes and notify agent
-  useEffect(() => {
-    if (!isConnected) return;
-    sendSessionUpdate({ talkWithPage }).catch(error => {
-      console.error('[Chat] Failed to update talkWithPage:', error);
-    });
-  }, [talkWithPage, isConnected, sendSessionUpdate]);
-
-  // Watch for page URL/title changes and notify agent
-  useEffect(() => {
-    if (!isConnected || typeof window === 'undefined') return;
-    
-    const currentUrl = window.location.href;
-    const currentTitle = document.title;
-    
-    sendSessionUpdate({ 
-      pageUrl: currentUrl,
-      pageTitle: currentTitle 
-    }).catch(error => {
-      console.error('[Chat] Failed to update page context:', error);
-    });
-  }, [pageUrl, pageTitle, isConnected, sendSessionUpdate]);
-
-  // Reset userHasScrolled when streaming stops
-  useEffect(() => {
-    if (!isStreaming) {
-      setUserHasScrolled(false);
-    }
-  }, [isStreaming]);
-
-  // Auto-scroll to bottom when messages change
-  useEffect(() => {
-    if (!userHasScrolled && isStreaming) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, userHasScrolled, isStreaming]);
-
-  // Detect user scroll during streaming
-  useEffect(() => {
-    const container = messagesContainerRef.current;
-    if (!container) return;
-
-    let lastScrollTop = container.scrollTop;
-
-    const handleScroll = () => {
-      if (isStreaming) {
-        const currentScrollTop = container.scrollTop;
-        const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
-
-        if (currentScrollTop < lastScrollTop && !userHasScrolled) {
-          setUserHasScrolled(true);
-        } else if (isAtBottom && userHasScrolled) {
-          setUserHasScrolled(false);
-        }
-
-        lastScrollTop = currentScrollTop;
-      }
-    };
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [isStreaming, userHasScrolled]);
+  // Auto-scroll to bottom when messages change (only if user is near bottom)
+  const { scrollToBottom } = useAutoScroll({
+    messagesContainerRef,
+    messagesEndRef,
+    messages,
+    threshold: 0.1, // 10% from bottom
+  });
 
   // Handle connection errors
   useEffect(() => {
@@ -277,17 +243,53 @@ export default function ChatLiveKit({
     }
   }, [connectionError]);
 
-  const handleClear = () => {
+  const handleClear = async () => {
     if (messages.length > 0) {
       saveChatToHistory(messages as Message[]);
     }
 
+    // Send clear history event to agent
+    if (isConnected) {
+      try {
+        await sendClearHistory();
+        console.log('[Chat] Server-side history cleared');
+      } catch (error) {
+        console.error('[Chat] Failed to clear server-side history:', error);
+      }
+    }
+
     clearMessages();
     localStorage.removeItem("chat-messages");
+    // Clear the history restored flag so it can be restored again if needed
+    historyRestoredRef.current = false;
     setError(null);
   };
 
-  const handleRestoreChat = (chatId: string) => {
+  const handleModalitySwitch = async (newModality: "text" | "voice") => {
+    if (newModality === modality) return;
+    
+    console.log('[Chat] Switching modality:', modality, '→', newModality);
+    
+    // Disconnect from current session
+    if (isConnected) {
+      disconnect();
+    }
+    
+    // Clear flags so history can be restored in new session
+    historyRestoredRef.current = false;
+    waitingForAgentRef.current = true;
+    
+    // Update modality (useLiveKitAudio will handle mic enable/disable)
+    setModality(newModality);
+    
+    // Wait for disconnect to complete
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Reconnect with new modality (history will auto-restore on connection)
+    await connect();
+  };
+
+  const handleRestoreChat = async (chatId: string) => {
     const chatMessages = getChatById(chatId);
     if (chatMessages) {
       if (messages.length > 0) {
@@ -297,9 +299,22 @@ export default function ChatLiveKit({
       setMessages(chatMessages);
       localStorage.setItem("chat-messages", JSON.stringify(chatMessages));
 
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 300);
+      // Clear and resend history to agent
+      historyRestoredRef.current = false;
+      
+      // Send restored messages to agent if connected and ready
+      if (isConnected && agentState === 'listening') {
+        try {
+          await sendRestoreHistory(chatMessages as Message[]);
+          historyRestoredRef.current = true;
+          console.log('[Chat] Restored chat history sent to agent');
+        } catch (error) {
+          console.error('[Chat] Failed to restore chat history to agent:', error);
+        }
+      }
+
+      // Scroll to bottom after restoring chat
+      scrollToBottom({ force: true, delay: 600 });
     }
   };
 
@@ -307,8 +322,11 @@ export default function ChatLiveKit({
     if (!input.trim()) return;
 
     try {
-      // Add user message to UI
-      addUserMessage(input);
+      // In text mode, add message to UI immediately
+      // In voice mode, wait for agent to echo it back via conversation_item_added
+      if (modality === 'text') {
+        addUserMessage(input);
+      }
       
       // Send to LiveKit
       await sendChatMessage(input);
@@ -327,21 +345,32 @@ export default function ChatLiveKit({
     setIsStreaming(false);
   };
 
-  const status = isStreaming ? 'streaming' : agentState === 'thinking' ? 'submitted' : 'idle';
-
   return (
     <div className="flex flex-col h-full bg-[#0a0a0b]">
       <ChatHeader
         model={model}
         reasoningEffort={reasoningEffort}
+        modality={modality}
         onModelChange={setModel}
         onReasoningChange={setReasoningEffort}
+        onModalityChange={handleModalitySwitch}
         onClear={handleClear}
         onClose={onClose}
         isExpanded={isExpanded}
         onToggleExpand={() => setIsExpanded(!isExpanded)}
         onRestoreChat={handleRestoreChat}
       />
+
+      {/* Voice Controls - Show only in voice mode */}
+      {modality === 'voice' && (
+        <VoiceControls
+          isMicEnabled={isMicEnabled}
+          isAudioEnabled={isAudioEnabled}
+          isAgentSpeaking={agentState === 'speaking'}
+          onToggleMic={toggleMicrophone}
+          onToggleAudio={() => setIsAudioEnabled(!isAudioEnabled)}
+        />
+      )}
 
       {/* Connection status indicator */}
       {!isConnected && (
@@ -357,8 +386,8 @@ export default function ChatLiveKit({
 
       <MessageList
         ref={messagesContainerRef}
-        messages={messages as Message[]}
-        status={status}
+        messages={messages}
+        status={agentState}
         messagesEndRef={messagesEndRef as RefObject<HTMLDivElement>}
         onFocusInput={() => inputRef.current?.focus()}
       />
@@ -425,12 +454,14 @@ export default function ChatLiveKit({
           onChange={setInput}
           onSubmit={handleSubmit}
           onStop={handleStop}
-          disabled={!isConnected || status === "submitted"}
-          isStreaming={status === "streaming"}
+          disabled={!isConnected || (modality === 'text' && status === "submitted")}
+          isStreaming={modality === 'text' && status === "streaming"}
           model={model}
           reasoningEffort={reasoningEffort}
+          modality={modality}
           onModelChange={setModel}
           onReasoningChange={setReasoningEffort}
+          onModalityChange={handleModalitySwitch}
           renderFilter={() => (
             <CategoryFilter
               categories={categories}

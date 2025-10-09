@@ -4,10 +4,11 @@ import type { Message, MessagePart } from '../types';
 import type { AgentEventType } from '@/lib/livekit/types';
 
 interface PendingToolCall {
+  id: string; // Unique tool call ID from agent
   name: string;
-  callId: string;
-  output: any;
   input: Record<string, any>;
+  output?: any;
+  startTime?: number;
 }
 
 interface UseLiveKitAgentEventsProps {
@@ -16,6 +17,7 @@ interface UseLiveKitAgentEventsProps {
   setMessages: (messages: Message[]) => void;
   setIsStreaming: (streaming: boolean) => void;
   setError: (error: string | null) => void;
+  modality: 'text' | 'voice';
 }
 
 interface UseLiveKitAgentEventsReturn {
@@ -28,11 +30,14 @@ export function useLiveKitAgentEvents({
   setMessages,
   setIsStreaming,
   setError,
+  modality,
 }: UseLiveKitAgentEventsProps): UseLiveKitAgentEventsReturn {
   const currentMessageRef = useRef<string | null>(null);
   const pendingToolCallsRef = useRef<PendingToolCall[]>([]);
+  const activeToolsRef = useRef<Map<string, PendingToolCall>>(new Map());
 
   const handleAgentEvent = useCallback((event: AgentEventType) => {
+    
     console.log('[Agent Event]', event.type, event);
 
     switch (event.type) {
@@ -62,6 +67,26 @@ export function useLiveKitAgentEvents({
         break;
 
       case 'conversation_item_added':
+        // Handle user messages from conversation_item_added event (ONLY in voice mode)
+        if (event.role === 'user' && event.content && modality === 'voice') {
+          console.log('[Chat] Adding user message from voice transcription:', {
+            content: event.content.substring(0, 100),
+            modality,
+          });
+
+          const userMessage: Message = {
+            id: nanoid(),
+            role: 'user',
+            parts: [
+              {
+                type: 'text',
+                text: event.content,
+              } as MessagePart
+            ],
+          };
+          setMessages([...messages, userMessage]);
+        }
+        
         // Handle assistant messages from conversation_item_added event
         if (event.role === 'assistant' && event.content) {
           console.log('[Chat] Adding text to assistant message:', {
@@ -95,12 +120,13 @@ export function useLiveKitAgentEvents({
             // Add any pending tool calls
             if (pendingToolCallsRef.current.length > 0) {
               pendingToolCallsRef.current.forEach((toolCall) => {
-                const toolPart: MessagePart = {
+                const toolPart = {
                   type: `tool-${toolCall.name}`,
+                  toolCallId: toolCall.id, // Use toolCallId for AI SDK compatibility
                   state: 'output-available',
                   output: toolCall.output,
                   input: toolCall.input || {},
-                } as MessagePart;
+                } as unknown as MessagePart;
                 parts.push(toolPart);
               });
               pendingToolCallsRef.current = [];
@@ -126,91 +152,146 @@ export function useLiveKitAgentEvents({
         }
         break;
 
-      case 'function_tools_executed':
-        // Add tool executions to the current message immediately
-        console.log('[Chat] Function tools executed:', event.toolCalls);
+      case 'tool_start':
+        console.log('[Chat] Tool started:', event.tool, 'callId:', event.id);
         
+        // Parse params
+        let parsedParams: Record<string, any> = {};
+        try {
+          if (typeof event.params === 'string') {
+            parsedParams = JSON.parse(event.params);
+          } else {
+            parsedParams = event.params || {};
+          }
+        } catch (e) {
+          console.warn('Failed to parse tool params:', event.params);
+        }
+        
+        const toolName = event.tool;
+        const callId = event.id;
+        
+        // Track this tool as active using callId as key
+        activeToolsRef.current.set(callId, {
+          id: callId,
+          name: toolName,
+          input: parsedParams,
+          startTime: Date.now(),
+        });
+        
+        // Add tool part with "loading" state to current message
         if (currentMessageRef.current) {
           const msg = messages.find(m => m.id === currentMessageRef.current);
           if (msg) {
-            const toolParts: MessagePart[] = event.toolCalls.map((call) => {
-              // Parse JSON strings to objects
-              let parsedOutput = call.output;
-              let parsedInput: Record<string, any> = {};
-              
-              try {
-                if (typeof call.output === 'string') {
-                  parsedOutput = JSON.parse(call.output);
-                }
-              } catch (e) {
-                console.warn('Failed to parse tool output as JSON:', call.output);
-              }
-              
-              // Input might not be present in the event
-              if ('input' in call && call.input) {
-                try {
-                  if (typeof call.input === 'string') {
-                    parsedInput = JSON.parse(call.input as string);
-                  } else {
-                    parsedInput = call.input as Record<string, any>;
-                  }
-                } catch (e) {
-                  console.warn('Failed to parse tool input as JSON:', call.input);
-                }
-              }
-              
-              return {
-                type: `tool-${call.name}`,
-                state: 'output-available',
-                output: parsedOutput,
-                input: parsedInput,
-              } as MessagePart;
-            });
+            const toolPart = {
+              type: `tool-${toolName}`,
+              toolCallId: callId, // Use toolCallId for AI SDK compatibility
+              state: 'input-available',
+              input: parsedParams,
+            } as unknown as MessagePart;
             
-            console.log('[Chat] Adding tool parts to current message:', toolParts);
+            console.log('[Chat] Adding tool loading part to current message');
             
-            // Remove reasoning indicator and add tool parts
+            // Remove reasoning indicator and add tool part
             const filteredParts = msg.parts.filter(p => p.type !== 'reasoning');
             
             updateMessage(currentMessageRef.current, {
-              parts: [...filteredParts, ...toolParts],
+              parts: [...filteredParts, toolPart],
+            });
+          }
+        }
+        break;
+
+      case 'tool_end':
+        console.log('[Chat] Tool ended:', event.tool, 'callId:', event.id);
+        
+        // Get the active tool using callId
+        const activeTool = activeToolsRef.current.get(event.id);
+        if (!activeTool) {
+          console.warn('Received tool_end for unknown tool call:', event.tool, 'callId:', event.id);
+          break;
+        }
+        
+        // Parse result
+        let parsedResult = event.result;
+        try {
+          if (typeof event.result === 'string') {
+            parsedResult = JSON.parse(event.result);
+          }
+        } catch (e) {
+          console.warn('Failed to parse tool result:', event.result);
+        }
+        
+        // Update the tool with result
+        activeTool.output = parsedResult;
+        
+        // Update the tool part to show output
+        if (currentMessageRef.current) {
+          const msg = messages.find(m => m.id === currentMessageRef.current);
+          if (msg) {
+            const updatedParts = msg.parts.map(part => {
+              // Match by both tool name AND toolCallId to handle parallel calls
+              if (
+                part.type === `tool-${activeTool.name}` && 
+                'state' in part && 
+                part.state === 'input-available' &&
+                'toolCallId' in part &&
+                part.toolCallId === event.id
+              ) {
+                return {
+                  ...part,
+                  state: 'output-available',
+                  output: parsedResult,
+                } as unknown as MessagePart;
+              }
+              return part;
+            });
+            
+            console.log('[Chat] Updating tool part with output');
+            
+            updateMessage(currentMessageRef.current, {
+              parts: updatedParts,
             });
           }
         } else {
           // Store for later if no current message
-          const toolCalls: PendingToolCall[] = event.toolCalls.map((call) => {
-            let parsedOutput = call.output;
-            let parsedInput: Record<string, any> = {};
-            
-            try {
-              if (typeof call.output === 'string') {
-                parsedOutput = JSON.parse(call.output);
-              }
-            } catch (e) {
-              console.warn('Failed to parse tool output as JSON');
-            }
-            
-            if ('input' in call && call.input) {
-              try {
-                if (typeof call.input === 'string') {
-                  parsedInput = JSON.parse(call.input as string);
-                } else {
-                  parsedInput = call.input as Record<string, any>;
-                }
-              } catch (e) {
-                console.warn('Failed to parse tool input as JSON');
-              }
-            }
-            
-            return {
-              name: call.name,
-              callId: call.callId,
-              output: parsedOutput,
-              input: parsedInput,
-            };
-          });
-          pendingToolCallsRef.current = [...pendingToolCallsRef.current, ...toolCalls];
+          pendingToolCallsRef.current.push(activeTool);
         }
+        
+        // Remove from active tools using callId
+        activeToolsRef.current.delete(event.id);
+        break;
+
+      case 'tool_error':
+        console.error('[Chat] Tool error:', event.tool, 'callId:', event.id, 'error:', event.error);
+        
+        const errorTool = activeToolsRef.current.get(event.id);
+        if (errorTool && currentMessageRef.current) {
+          const msg = messages.find(m => m.id === currentMessageRef.current);
+          if (msg) {
+            const updatedParts = msg.parts.map(part => {
+              // Match by both tool name AND toolCallId to handle parallel calls
+              if (
+                part.type === `tool-${errorTool.name}` && 
+                'state' in part &&
+                'toolCallId' in part &&
+                part.toolCallId === event.id
+              ) {
+                return {
+                  ...part,
+                  state: 'output-error',
+                  errorText: event.error,
+                } as unknown as MessagePart;
+              }
+              return part;
+            });
+            
+            updateMessage(currentMessageRef.current, {
+              parts: updatedParts,
+            });
+          }
+        }
+        
+        activeToolsRef.current.delete(event.id);
         break;
 
       case 'error':
@@ -218,7 +299,7 @@ export function useLiveKitAgentEvents({
         setIsStreaming(false);
         break;
     }
-  }, [messages, updateMessage, setMessages, setIsStreaming, setError]);
+  }, [messages, updateMessage, setMessages, setIsStreaming, setError, modality]);
 
   return {
     handleAgentEvent,

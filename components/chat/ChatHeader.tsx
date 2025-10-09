@@ -10,8 +10,10 @@ import { ChatHistoryPopup } from "./ChatHistoryPopup";
 interface ChatHeaderProps {
   model: "low" | "high";
   reasoningEffort: "low" | "medium" | "high";
+  modality?: "text" | "voice";
   onModelChange: (model: "low" | "high") => void;
   onReasoningChange: (effort: "low" | "medium" | "high") => void;
+  onModalityChange?: (modality: "text" | "voice") => void;
   onClear: () => void;
   onClose?: () => void;
   isExpanded?: boolean;
@@ -22,8 +24,10 @@ interface ChatHeaderProps {
 export function ChatHeader({
   model,
   reasoningEffort,
+  modality = "text",
   onModelChange,
   onReasoningChange,
+  onModalityChange,
   onClear,
   onClose,
   isExpanded,
@@ -64,6 +68,36 @@ export function ChatHeader({
             </svg>
           </button>
           <div className="flex items-center gap-2 relative">
+            {/* Modality Toggle */}
+            {onModalityChange && (
+              <button
+                onClick={() => onModalityChange(modality === 'text' ? 'voice' : 'text')}
+                className={cn(
+                  "px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors border",
+                  modality === 'voice'
+                    ? "bg-[#1FD5F9]/10 text-[#1FD5F9] border-[#1FD5F9]/30"
+                    : "bg-transparent text-[#999999] border-[#333333] hover:border-[#1FD5F9]/30 hover:text-white"
+                )}
+                title={`Switch to ${modality === 'text' ? 'voice' : 'text'} mode`}
+              >
+                {modality === 'voice' ? (
+                  <div className="flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                    <span>Voice</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    <span>Text</span>
+                  </div>
+                )}
+              </button>
+            )}
+            
             {onToggleExpand && (
               <button
                 onClick={onToggleExpand}

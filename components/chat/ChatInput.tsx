@@ -16,8 +16,10 @@ interface ChatInputProps {
   renderFilter?: () => React.ReactNode;
   model?: "low" | "high";
   reasoningEffort?: "low" | "medium" | "high";
+  modality?: "text" | "voice";
   onModelChange?: (model: "low" | "high") => void;
   onReasoningChange?: (effort: "low" | "medium" | "high") => void;
+  onModalityChange?: (modality: "text" | "voice") => void;
 }
 
 export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
@@ -31,8 +33,10 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
     renderFilter,
     model = "high",
     reasoningEffort = "medium",
+    modality = "text",
     onModelChange,
-    onReasoningChange
+    onReasoningChange,
+    onModalityChange
   }, ref) {
     const [isListening, setIsListening] = useState(false);
     const [showModelDropdown, setShowModelDropdown] = useState(false);
@@ -243,6 +247,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
               </button>
 
               {renderFilter && renderFilter()}
+              
               <button
                 type="button"
                 onClick={toggleListening}

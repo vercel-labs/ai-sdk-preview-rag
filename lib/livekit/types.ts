@@ -34,18 +34,21 @@ export interface UserInputTranscribedEvent extends AgentEvent {
 // Tool execution events
 export interface ToolStartEvent extends AgentEvent {
   type: 'tool_start';
+  id: string;
   tool: string;
   params: any;
 }
 
 export interface ToolEndEvent extends AgentEvent {
   type: 'tool_end';
+  id: string;
   tool: string;
   result: any;
 }
 
 export interface ToolErrorEvent extends AgentEvent {
   type: 'tool_error';
+  id: string; 
   tool: string;
   error: string;
 }
@@ -148,7 +151,12 @@ export interface SessionConfigUpdateEvent {
   timestamp: number;
 }
 
-export type ClientToAgentEvent = RestoreHistoryEvent | SessionConfigUpdateEvent;
+export interface ClearHistoryEvent {
+  type: 'clear_history';
+  timestamp: number;
+}
+
+export type ClientToAgentEvent = RestoreHistoryEvent | SessionConfigUpdateEvent | ClearHistoryEvent;
 
 // LiveKit connection metadata
 export interface LiveKitConnectionMetadata {

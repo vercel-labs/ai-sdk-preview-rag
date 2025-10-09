@@ -7,7 +7,7 @@ export default function DemoLiveKitPage() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="flex flex-col h-screen bg-[#070707]">
+    <div className="dark flex flex-col h-screen bg-[#070707]">
       <div className="flex-shrink-0 border-b border-[#1a1a1a] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
