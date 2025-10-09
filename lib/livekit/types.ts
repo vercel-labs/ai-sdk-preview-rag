@@ -120,6 +120,36 @@ export interface AgentChatMessage {
 
 export type ChatMessageType = UserChatMessage | AgentChatMessage;
 
+// Session configuration that can be updated
+export interface SessionConfig {
+  model: 'low' | 'high';
+  effort: 'low' | 'medium' | 'high';
+  selectedCategories: string[];
+  talkWithPage: boolean;
+  pageUrl: string;
+  pageTitle: string;
+  browserHistory?: string[];
+  modality: 'text' | 'voice';
+}
+
+// Client-to-agent events (sent via data channel)
+export interface RestoreHistoryEvent {
+  type: 'restore_history';
+  messages: Array<{
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp?: number;
+  }>;
+}
+
+export interface SessionConfigUpdateEvent {
+  type: 'session_config_update';
+  config: Partial<SessionConfig>;
+  timestamp: number;
+}
+
+export type ClientToAgentEvent = RestoreHistoryEvent | SessionConfigUpdateEvent;
+
 // LiveKit connection metadata
 export interface LiveKitConnectionMetadata {
   pageUrl: string;

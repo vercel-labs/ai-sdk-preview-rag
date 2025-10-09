@@ -105,8 +105,8 @@ export default function ChatLiveKit({
       autoConnect: false,
     });
 
-  // LiveKit events
-  const { agentState, sendChatMessage } = useLiveKitEvents({
+  // LiveKit events  
+  const { agentState, sendChatMessage, sendRestoreHistory, sendSessionUpdate } = useLiveKitEvents({
     room,
     onAgentEvent: handleAgentEvent,
   });
@@ -134,6 +134,24 @@ export default function ChatLiveKit({
       connect();
     }
   }, [isConnected, isConnecting, connectionState.status, connect]);
+
+  // Send message history after connection (config already in JWT token)
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const initSession = async () => {
+      try {
+        // Send message history if exists (config is already in JWT token metadata)
+        if (messages.length > 0) {
+          await sendRestoreHistory(messages as Message[]);
+        }
+      } catch (error) {
+        console.error('[Chat] Failed to restore history:', error);
+      }
+    };
+
+    initSession();
+  }, [isConnected]); // Only run once when connected
 
   // Save messages to localStorage
   useEffect(() => {
@@ -164,6 +182,53 @@ export default function ChatLiveKit({
   useEffect(() => {
     localStorage.setItem("selected-categories", JSON.stringify(selectedCategories));
   }, [selectedCategories]);
+
+  // Watch for model changes and notify agent
+  useEffect(() => {
+    if (!isConnected) return;
+    sendSessionUpdate({ model }).catch(error => {
+      console.error('[Chat] Failed to update model:', error);
+    });
+  }, [model, isConnected, sendSessionUpdate]);
+
+  // Watch for reasoning effort changes and notify agent
+  useEffect(() => {
+    if (!isConnected) return;
+    sendSessionUpdate({ effort: reasoningEffort }).catch(error => {
+      console.error('[Chat] Failed to update effort:', error);
+    });
+  }, [reasoningEffort, isConnected, sendSessionUpdate]);
+
+  // Watch for category changes and notify agent
+  useEffect(() => {
+    if (!isConnected) return;
+    sendSessionUpdate({ selectedCategories }).catch(error => {
+      console.error('[Chat] Failed to update categories:', error);
+    });
+  }, [selectedCategories, isConnected, sendSessionUpdate]);
+
+  // Watch for talkWithPage changes and notify agent
+  useEffect(() => {
+    if (!isConnected) return;
+    sendSessionUpdate({ talkWithPage }).catch(error => {
+      console.error('[Chat] Failed to update talkWithPage:', error);
+    });
+  }, [talkWithPage, isConnected, sendSessionUpdate]);
+
+  // Watch for page URL/title changes and notify agent
+  useEffect(() => {
+    if (!isConnected || typeof window === 'undefined') return;
+    
+    const currentUrl = window.location.href;
+    const currentTitle = document.title;
+    
+    sendSessionUpdate({ 
+      pageUrl: currentUrl,
+      pageTitle: currentTitle 
+    }).catch(error => {
+      console.error('[Chat] Failed to update page context:', error);
+    });
+  }, [pageUrl, pageTitle, isConnected, sendSessionUpdate]);
 
   // Reset userHasScrolled when streaming stops
   useEffect(() => {
