@@ -18,6 +18,12 @@ export function RedirectPart({ part }: PartComponentProps) {
   }
 
   const { url, description, type } = part.output;
+  
+  // Don't render if missing required fields
+  if (!url || !description?.trim()) {
+    console.warn('RedirectPart: Missing url or description', { url, description, type });
+    return null;
+  }
 
     const getIcon = () => {
       if (type === 'slack') {

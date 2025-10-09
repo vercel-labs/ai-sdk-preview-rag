@@ -8,7 +8,8 @@ import type {
   RestoreHistoryEvent,
   SessionConfig,
   SessionConfigUpdateEvent,
-  ClearHistoryEvent
+  ClearHistoryEvent,
+  LLMStreamChunkEvent
 } from '@/lib/livekit/types';
 import type { Message } from '@/components/chat/types';
 
@@ -315,6 +316,21 @@ export function useLiveKitEvents({
           }
           // Note: parseAgentEvent returns null for filtered events (speech_created, metrics_collected)
           // which is expected behavior, not an error
+        }
+
+        // Handle real-time streaming chunks
+        if (topic === 'lk.agent_stream') {
+          if (data.type === 'llm_chunk' && data.content) {
+            const streamEvent: LLMStreamChunkEvent = {
+              type: 'llm_chunk',
+              content: data.content,
+              timestamp: Date.now(),
+            };
+            
+            if (onAgentEvent) {
+              onAgentEvent(streamEvent);
+            }
+          }
         }
       } catch (error) {
         console.error('[LiveKit] Failed to handle data message:', error, {

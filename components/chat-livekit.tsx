@@ -90,13 +90,14 @@ export default function ChatLiveKit({
     return [];
   })();
 
-  const { messages, addUserMessage, updateMessage, setMessages, clearMessages } =
+  const { messages, addUserMessage, updateMessage, appendTextToMessage, setMessages, clearMessages } =
     useLiveKitMessages(initialMessages);
 
   // Agent event handling
   const { handleAgentEvent } = useLiveKitAgentEvents({
     messages,
     updateMessage,
+    appendTextToMessage,
     setMessages,
     setIsStreaming,
     setError,

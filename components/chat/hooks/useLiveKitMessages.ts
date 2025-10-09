@@ -7,6 +7,7 @@ interface UseLiveKitMessagesReturn {
   addUserMessage: (content: string) => Message;
   addAgentMessage: (content: string, messageId?: string) => Message;
   updateMessage: (id: string, updates: Partial<Message>) => void;
+  appendTextToMessage: (id: string, text: string) => void;
   setMessages: (messages: Message[]) => void;
   clearMessages: () => void;
 }
@@ -52,6 +53,41 @@ export function useLiveKitMessages(initialMessages: Message[] = []): UseLiveKitM
     );
   }, []);
 
+  const appendTextToMessage = useCallback((id: string, text: string) => {
+    setMessages((prev) =>
+      prev.map((msg) => {
+        if (msg.id !== id) return msg;
+        
+        // Find existing text part or create new one
+        const textPartIndex = msg.parts.findIndex(p => p.type === 'text');
+        
+        if (textPartIndex !== -1) {
+          // Append to existing text part
+          const updatedParts = msg.parts.map((p, idx) => {
+            if (idx === textPartIndex && 'text' in p) {
+              return { ...p, text: (p.text || '') + text };
+            }
+            return p;
+          });
+          return { ...msg, parts: updatedParts };
+        } else {
+          // Add new text part after removing reasoning indicator
+          const filteredParts = msg.parts.filter(p => p.type !== 'reasoning');
+          return {
+            ...msg,
+            parts: [
+              ...filteredParts,
+              {
+                type: 'text',
+                text: text,
+              },
+            ],
+          };
+        }
+      })
+    );
+  }, []);
+
   const clearMessages = useCallback(() => {
     setMessages([]);
   }, []);
@@ -61,6 +97,7 @@ export function useLiveKitMessages(initialMessages: Message[] = []): UseLiveKitM
     addUserMessage,
     addAgentMessage,
     updateMessage,
+    appendTextToMessage,
     setMessages,
     clearMessages,
   };

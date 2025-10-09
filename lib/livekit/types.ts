@@ -93,6 +93,12 @@ export interface SessionClosedEvent extends AgentEvent {
   error?: string;
 }
 
+// LLM stream chunk event (real-time streaming)
+export interface LLMStreamChunkEvent extends AgentEvent {
+  type: 'llm_chunk';
+  content: string;
+}
+
 // Union type for all agent events
 export type AgentEventType =
   | AgentStateChangedEvent
@@ -105,7 +111,8 @@ export type AgentEventType =
   | ModalityChangeEvent
   | ConversationItemAddedEvent
   | ErrorEvent
-  | SessionClosedEvent;
+  | SessionClosedEvent
+  | LLMStreamChunkEvent;
 
 // Chat message types for data channel
 export interface UserChatMessage {
