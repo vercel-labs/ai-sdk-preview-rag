@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { VoiceWidget } from "./VoiceWidget";
 
 interface EmptyStateProps {
   onFocusInput?: () => void;
@@ -34,8 +33,6 @@ export function EmptyState({ onFocusInput }: EmptyStateProps) {
             </h2>
             <p className="text-[#64748b] text-base">Ask me anything about LiveKit integration, SDKs and other LiveKit topics</p>
           </div>
-
-          <VoiceWidget />
         </motion.div>
 
         <motion.div
