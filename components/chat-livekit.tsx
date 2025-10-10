@@ -455,8 +455,8 @@ export default function ChatLiveKit({
           onChange={setInput}
           onSubmit={handleSubmit}
           onStop={handleStop}
-          disabled={!isConnected || (modality === 'text' && status === "submitted")}
-          isStreaming={modality === 'text' && status === "streaming"}
+          disabled={!isConnected || (modality === 'text' && agentState === "speaking")}
+          isStreaming={modality === 'text' && isStreaming}
           model={model}
           reasoningEffort={reasoningEffort}
           modality={modality}
