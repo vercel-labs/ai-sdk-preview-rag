@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { UIMessage, useChat } from "@ai-sdk/react";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import ReactMarkdown, { Options } from "react-markdown";
+import { Streamdown } from "streamdown";
 import React from "react";
 import ProjectOverview from "@/components/project-overview";
 import { LoadingIcon } from "@/components/icons";
@@ -185,14 +185,12 @@ const AssistantMessage = ({ message }: { message: UIMessage | undefined }) => {
         className="whitespace-pre-wrap font-mono anti text-sm text-neutral-800 dark:text-neutral-200 overflow-hidden"
         id="markdown"
       >
-        <MemoizedReactMarkdown
-          className={"max-h-72 overflow-y-scroll no-scrollbar-gutter"}
-        >
+        <Streamdown className={"max-h-72 overflow-y-scroll no-scrollbar-gutter"}>
           {message.parts
             .filter((part) => part.type === "text")
             .map((part) => part.text)
             .join(" ")}
-        </MemoizedReactMarkdown>
+        </Streamdown>
       </motion.div>
     </AnimatePresence>
   );
@@ -228,9 +226,3 @@ const Loading = ({ tool }: { tool?: string }) => {
   );
 };
 
-const MemoizedReactMarkdown: React.FC<Options> = React.memo(
-  ReactMarkdown,
-  (prevProps, nextProps) =>
-    prevProps.children === nextProps.children &&
-    prevProps.className === nextProps.className,
-);
