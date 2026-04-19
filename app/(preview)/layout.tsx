@@ -1,7 +1,12 @@
+import { BotIdClient } from "botid/client";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 
 import "./globals.css";
+
+const protectedRoutes = [
+  { path: "/api/chat", method: "POST" },
+];
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ai-sdk-preview-rag.vercel.app"),
@@ -17,6 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <BotIdClient protect={protectedRoutes} />
+      </head>
       <body>
         {children}
         <Analytics />

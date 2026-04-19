@@ -1,13 +1,25 @@
 import { createResource } from "@/lib/actions/resources";
 import { findRelevantContent } from "@/lib/ai/embedding";
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
+import { getVercelOidcToken } from "@vercel/functions/oidc";
 import { convertToCoreMessages, generateObject, streamText, tool } from "ai";
+import { checkBotId } from "botid/server";
 import { z } from "zod";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
+  const { isBot } = await checkBotId();
+  if (isBot) {
+    return new Response("Access denied", { status: 403 });
+  }
+
+  const openai = createOpenAI({
+    baseURL: "https://ai-gateway.vercel.sh/v1",
+    apiKey: await getVercelOidcToken(),
+  });
+
   const { messages } = await req.json();
 
   const result = await streamText({
