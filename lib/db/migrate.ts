@@ -6,11 +6,11 @@ import postgres from "postgres";
 import "dotenv/config";
 
 const runMigrate = async () => {
-  if (!env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is not defined");
+  if (!env.POSTGRES_DATABASE_URL) {
+    throw new Error("POSTGRES_DATABASE_URL is not defined");
   }
 
-  const connection = postgres(env.DATABASE_URL, { max: 1 });
+  const connection = postgres(env.POSTGRES_DATABASE_URL, { max: 1 });
 
   const db = drizzle(connection);
 
